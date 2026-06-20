@@ -45,7 +45,6 @@ Exploratory phase — understanding the platform structure and collecting a smal
 
 ```bash
 pip install pandas
-playwright install
 ```
 
 ## License
