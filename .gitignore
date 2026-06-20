@@ -15,17 +15,20 @@ venv/
 env/
 ENV/
 
-# ---- Environment / secrets ----
+# ---- Secrets ----
 .env
 *.env
+salt.txt
 
 # ---- Jupyter ----
 .ipynb_checkpoints/
 
-# ---- Collected data ----
+# ---- Collected raw data ----
 data/*.csv
 data/*.json
 data/raw/
+# ---- de-identified contributors sample ----
+!data/contributors_deidentified.csv
 
 # ---- IDE / OS ----
 .vscode/
