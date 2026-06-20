@@ -18,14 +18,17 @@ import pandas as pd
 
 
 def scrape_sitemap():
-    all_threads = []
-
+    
     base_url = "https://www.7cups.com/"
     start_url = "https://www.7cups.com/qa/"
 
+    all_threads = []
+
     with sync_playwright() as p:
 
-        browser = p.chromium.launch(headless=False)
+        browser = p.chromium.launch(
+            headless=False
+        )
 
         page = browser.new_page()
 
@@ -33,50 +36,76 @@ def scrape_sitemap():
 
         page.goto(start_url)
 
-        page.wait_for_selector("a.list-group-item")
+        page.wait_for_selector("div.card.mb-3")
 
-        thread_elements = page.query_selector_all("a.list-group-item")
+        cards = page.query_selector_all("div.card.mb-3")
+
+        recent_card = None
+
+        for card in cards:
+            header = card.query_selector(".card-header")
+
+            if header:
+                header_text = header.inner_text().strip()
+
+                if "Recent Questions" in header_text:
+                    recent_card = card
+                    break
+
+        if recent_card is None:
+            browser.close()
+            raise Exception("Could not locate the 'Recent Questions' section.")
+
+        thread_elements = recent_card.query_selector_all(
+            ".list-group.list-group-flush > a.list-group-item"
+        )
+
+        print(f"Found {len(thread_elements)} recent questions.\n")
 
         for thread in thread_elements:
 
-            # -----------------------------
+            # -----------------------
             # Title
-            # -----------------------------
+            # -----------------------
+
             title_element = thread.query_selector(".fw-semibold")
 
-            if title_element:
-                title = title_element.inner_text().strip()
-            else:
-                title = ""
+            if not title_element:
+                continue
 
-            # -----------------------------
+            title = title_element.inner_text().strip()
+
+            # -----------------------
             # Date
-            # -----------------------------
+            # -----------------------
+
             date_element = thread.query_selector("span.me-3 span")
 
-            if date_element:
-                date = date_element.inner_text().strip()
-            else:
-                date = ""
+            if not date_element:
+                continue
 
-            # -----------------------------
+            date = date_element.inner_text().strip()
+
+            # -----------------------
             # Link
-            # -----------------------------
+            # -----------------------
+
             href = thread.get_attribute("href")
 
             if href:
-                # Convert relative URL to absolute URL
+
                 if href.startswith("/"):
                     full_link = base_url + href
                 else:
                     full_link = href
+
             else:
                 full_link = ""
 
             all_threads.append({
                 "title": title,
                 "date": date,
-                "link": full_link,
+                "link": full_link
             })
 
         browser.close()
