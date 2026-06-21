@@ -29,6 +29,7 @@ data/*.json
 data/raw/
 # ---- de-identified contributors sample ----
 !data/contributors_deidentified.csv
+!data/bio_word_frequency.csv
 
 # ---- IDE / OS ----
 .vscode/
