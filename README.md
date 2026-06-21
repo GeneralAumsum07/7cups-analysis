@@ -18,13 +18,15 @@ Collect and analyze publicly available data to surface interesting patterns usin
 - **Public data only.** No logins, no private chats, no API endpoints. Only pages that are publicly accessible and permitted by the site's `robots.txt`.
 - **De-identification.** For the contributors dataset, names are replaced with a salted hash and the free-text bios are dropped before anything is committed; only structured fields (credentials, years of experience, specialties, article counts and dates) are stored. The raw scrape is never committed.
 - **Aggregate reporting.** Results are reported as patterns and statistics, never as individual quotes tied to a person.
-- **Limited, supervised collection.** Data is gathered with automated browser-based scraping (Playwright driving a real browser engine), restricted to a small public sample and carried out under faculty supervision.
+- **Limited, supervised collection.** Data is gathered with automated browser-based scraping (Playwright driving a real browser engine), restricted to a small public sample.
 
 ## Tech Stack
 
 - **Python 3**
 - `playwright` — browser automation; renders JavaScript-dependent pages (replaced the initial `requests` + `beautifulsoup4` approach, which a JavaScript challenge page blocked)
 - `pandas` — structuring and saving data
+- `matplotlib` — charts and visualization
+- `networkx` — graph analytics (contributor–specialty network)
 
 ## Project Structure
 
@@ -35,10 +37,11 @@ Collect and analyze publicly available data to surface interesting patterns usin
 ├── explore_sitemap.py             # initial forum/Q&A exploration (first attempt)
 ├── scrape_contributors.py         # Playwright scraper for Expert Contributors
 ├── deidentify_contributors.py     # raw scrape -> de-identified, committed-safe CSV
+├── analyze_contributors.py        # statistics, charts, and contributor-specialty graph
 ├── data/
 │   ├── contributors_raw.csv           # raw scrape (local only, gitignored)
 │   ├── contributors_deidentified.csv  # de-identified (committed)
-│   └── forum_threads.csv              # raw scrape (first attempt, gitignored) 
+│   └── forum_threads.csv              # raw scrape (first attempt, gitignored)
 └── report/                        # report and generated charts
 ```
 
@@ -46,12 +49,12 @@ Collect and analyze publicly available data to surface interesting patterns usin
 
 ## Status
 
-Forum/Q&A was a brief first attempt; the Expert Contributors directory is the main dataset. Collection and de-identification are in place — analysis and visualization are the next step.
+Forum/Q&A was a brief first attempt; the Expert Contributors directory is the main dataset. Collection, de-identification, and analysis (statistics, distributions, and a contributor–specialty graph) are in place.
 
 ## Setup
 
 ```bash
-pip install playwright pandas
+pip install playwright pandas matplotlib networkx
 playwright install
 ```
 
